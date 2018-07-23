@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
+
+    <View
+        android:id="@+id/v_fit"
+        android:layout_width="match_parent"
+        android:layout_height="0dip" />
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/v_fit"
+        android:background="#fff">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:gravity="center"
+            android:padding="15dp"
+            android:src="@mipmap/photowall_back_2x" />
+
+        <TextView
+            android:id="@+id/titleName"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/iv_add"
+            android:layout_toRightOf="@+id/iv_back"
+            android:background="#ffffff"
+            android:gravity="center"
+            android:text="我的照片墙"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:padding="15dp"
+            android:src="@mipmap/photowall_add_2x" />
+
+    </RelativeLayout>
+    <com.triplebro.photowall_new.widgets.MyListview
+        android:id="@+id/mlv_photo_wall"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_title">
+
+    </com.triplebro.photowall_new.widgets.MyListview>
+
+    <com.triplebro.photowall_new.widgets.ImageWatcher
+        android:id="@+id/v_image_watcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/rl_picture_imbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentRight="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/btn_picture_magnify_share"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@id/btn_picture_magnify_delete"
+            android:src="@mipmap/photowall_share_2x" />
+
+        <ImageView
+            android:id="@+id/btn_picture_magnify_delete"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="30dp"
+            android:background="@mipmap/photowall_deleteimage_2x" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
