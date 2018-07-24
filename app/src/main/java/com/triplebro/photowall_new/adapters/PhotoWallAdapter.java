@@ -79,6 +79,7 @@ public class PhotoWallAdapter extends BaseAdapter {
         paddingWidth = viewHolder.ll_photo_list.getPaddingLeft() + viewHolder.ll_photo_list.getPaddingRight();
         PhotoListAdapter photoListAdapter = new PhotoListAdapter(context, photoWallInfoList.get(position).getImagePath(),paddingWidth,position);
         photoListAdapter.setCallback(mCallback);
+        viewHolder.hlv_photo_list.setOnItemClickListener(photoListAdapter);
         viewHolder.hlv_photo_list.setAdapter(photoListAdapter);
         viewHolder.textView.setText(photoWallInfoList.get(position).getText());
         return convertView;

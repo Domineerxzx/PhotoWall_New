@@ -17,7 +17,7 @@ import com.triplebro.photowall_new.adapters.PhotoWallAdapter;
 import com.triplebro.photowall_new.beans.PhotoWallInfo;
 import com.triplebro.photowall_new.utils.Utils;
 import com.triplebro.photowall_new.widgets.ImageWatcher;
-import com.triplebro.photowall_new.widgets.MyListview;
+import com.triplebro.photowall_new.widgets.MyListView;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class MainActivity extends Activity implements PhotoListAdapter.Callback,
     private RelativeLayout rl_picture_imbtn;
     private ImageView btn_picture_magnify_delete;
     private ImageView btn_picture_magnify_share;
-    private MyListview mlv_photo_wall;
+    private MyListView mlv_photo_wall;
     private PhotoWallAdapter photoWallAdapter;
     private PhotoWallInfo photoWallInfo;
     private List<PhotoWallInfo> photoWallInfos;
@@ -57,7 +57,7 @@ public class MainActivity extends Activity implements PhotoListAdapter.Callback,
         imageWatcher = (ImageWatcher) findViewById(R.id.v_image_watcher);
         btn_picture_magnify_delete = (ImageView) findViewById(R.id.btn_picture_magnify_delete);
         btn_picture_magnify_share = (ImageView) findViewById(R.id.btn_picture_magnify_share);
-        mlv_photo_wall = (MyListview) findViewById(R.id.mlv_photo_wall);
+        mlv_photo_wall = (MyListView) findViewById(R.id.mlv_photo_wall);
 
         /*photoWallInfos = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -101,20 +101,17 @@ public class MainActivity extends Activity implements PhotoListAdapter.Callback,
 
 
     @Override
-    public void onThumbPictureClick(final ImageView i, final List<ImageView> imageGroupList, List<String> imagePath, final int position) {
+    public void onThumbPictureClick(final ImageView i, final List<ImageView> imageGroupList, List<String> imagePath, final int position,final int index) {
         imageWatcher.show(i, imageGroupList, imagePath);
+        final int[] indexof = {index};
         //图片删除
         btn_picture_magnify_delete.setOnClickListener(new View.OnClickListener() {
-            int index = -1;
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "删除", Toast.LENGTH_SHORT).show();
-                if (index == -1) {
-                    index = imageGroupList.indexOf(i);
-                }
-                imageGroupList.remove(index);
+                imageGroupList.remove(indexof[0]);
                 List<String> path = photoWallInfos.get(position).getImagePath();
-                path.remove(index);
+                path.remove(indexof[0]);
                 PhotoWallAdapter photoWallAdapter = new PhotoWallAdapter(MainActivity.this, photoWallInfos, MainActivity.this);
                 mlv_photo_wall.setAdapter(photoWallAdapter);
                 if (path.size() == 0) {
@@ -122,10 +119,10 @@ public class MainActivity extends Activity implements PhotoListAdapter.Callback,
                     imageWatcher.setVisibility(View.GONE);
                     rl_picture_imbtn.setVisibility(View.GONE);
                 } else if (index == 0) {
-                    imageWatcher.show(imageGroupList.get(index), imageGroupList, path);
+                    imageWatcher.show(imageGroupList.get(indexof[0]), imageGroupList, path);
                 } else {
-                    imageWatcher.show(imageGroupList.get(index - 1), imageGroupList, path);
-                    index = index - 1;
+                    imageWatcher.show(imageGroupList.get(indexof[0] - 1), imageGroupList, path);
+                    indexof[0] = indexof[0] -1;
                 }
             }
         });

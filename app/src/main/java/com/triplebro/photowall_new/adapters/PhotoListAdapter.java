@@ -1,13 +1,12 @@
 package com.triplebro.photowall_new.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,7 +18,7 @@ import com.triplebro.photowall_new.views.SquareImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoListAdapter extends BaseAdapter implements OnClickListener {
+public class PhotoListAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
     private int screenWidth;
     private int mSpace;
     private int paddingWidth;
@@ -103,8 +102,16 @@ public class PhotoListAdapter extends BaseAdapter implements OnClickListener {
             iPicture.remove(position);
             iPicture.add(position,viewHolder.siv_photo_list);
         }
-        viewHolder.siv_photo_list.setOnClickListener(this);
         return convertView;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (mCallback != null) {
+            System.out.println(iPicture.size() + "---------------------------------");
+            mCallback.onThumbPictureClick((ImageView) iPicture.get(position), iPicture, imagePath, this.position,position);
+            notifyDataSetChanged();
+        }
     }
 
     private class ViewHolder {
@@ -112,16 +119,9 @@ public class PhotoListAdapter extends BaseAdapter implements OnClickListener {
         private View v_view;
     }
 
-    @Override
-    public void onClick(View v) {
-        if (mCallback != null) {
-            System.out.println(iPicture.size() + "---------------------------------");
-            mCallback.onThumbPictureClick((ImageView) v, iPicture, imagePath, position);
-        }
-    }
 
     public interface Callback {
-        void onThumbPictureClick(ImageView i, List<ImageView> imageGroupList, List<String> imagePath, int position);
+        void onThumbPictureClick(ImageView i, List<ImageView> imageGroupList, List<String> imagePath, int position,int index);
     }
 
     public void setCallback(PhotoListAdapter.Callback callback) {

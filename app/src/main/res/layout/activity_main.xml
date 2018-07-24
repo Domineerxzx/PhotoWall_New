@@ -46,13 +46,13 @@
             android:src="@mipmap/photowall_add_2x" />
 
     </RelativeLayout>
-    <com.triplebro.photowall_new.widgets.MyListview
+    <com.triplebro.photowall_new.widgets.MyListView
         android:id="@+id/mlv_photo_wall"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/rl_title">
 
-    </com.triplebro.photowall_new.widgets.MyListview>
+    </com.triplebro.photowall_new.widgets.MyListView>
 
     <com.triplebro.photowall_new.widgets.ImageWatcher
         android:id="@+id/v_image_watcher"
