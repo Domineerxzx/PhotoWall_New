@@ -18,11 +18,12 @@ import com.triplebro.photowall_new.beans.PhotoWallInfo;
 import com.triplebro.photowall_new.utils.Utils;
 import com.triplebro.photowall_new.widgets.ImageWatcher;
 import com.triplebro.photowall_new.widgets.MyListView;
+import com.triplebro.photowall_new.widgets.PhotoHorizontalScrollView;
 
 import java.util.List;
 
 
-public class MainActivity extends Activity implements PhotoListAdapter.Callback, ImageWatcher.OnPictureLongPressListener {
+public class MainActivity extends Activity implements PhotoHorizontalScrollView.Callback, ImageWatcher.OnPictureLongPressListener {
 
     private ImageWatcher imageWatcher;
     private boolean isTranslucentStatus;
@@ -112,17 +113,18 @@ public class MainActivity extends Activity implements PhotoListAdapter.Callback,
                 imageGroupList.remove(indexof[0]);
                 List<String> path = photoWallInfos.get(position).getImagePath();
                 path.remove(indexof[0]);
+                Toast.makeText(MainActivity.this, photoWallInfos.size()+"+"+photoWallInfos.get(0).getImagePath().size(), Toast.LENGTH_SHORT).show();
                 PhotoWallAdapter photoWallAdapter = new PhotoWallAdapter(MainActivity.this, photoWallInfos, MainActivity.this);
                 mlv_photo_wall.setAdapter(photoWallAdapter);
                 if (path.size() == 0) {
                     photoWallInfos.remove(position);
                     imageWatcher.setVisibility(View.GONE);
                     rl_picture_imbtn.setVisibility(View.GONE);
-                } else if (index == 0) {
+                } else if (indexof[0] == 0) {
                     imageWatcher.show(imageGroupList.get(indexof[0]), imageGroupList, path);
-                } else {
+                } else{
                     imageWatcher.show(imageGroupList.get(indexof[0] - 1), imageGroupList, path);
-                    indexof[0] = indexof[0] -1;
+                    indexof[0] = indexof[0]-1;
                 }
             }
         });

@@ -81,7 +81,7 @@ public class PhotoListAdapter extends BaseAdapter implements AdapterView.OnItemC
         convertView.setTag(viewHolder);
         viewHolder.siv_photo_list.setLayoutParams(lpChildImage);
         if(imagePath.size()!=1){
-            viewHolder.siv_photo_list.setScaleType(ImageView.ScaleType.FIT_XY);
+            viewHolder.siv_photo_list.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }else{
             viewHolder.siv_photo_list.setScaleType(ImageView.ScaleType.FIT_START);
         }
@@ -110,7 +110,6 @@ public class PhotoListAdapter extends BaseAdapter implements AdapterView.OnItemC
         if (mCallback != null) {
             System.out.println(iPicture.size() + "---------------------------------");
             mCallback.onThumbPictureClick((ImageView) iPicture.get(position), iPicture, imagePath, this.position,position);
-            notifyDataSetChanged();
         }
     }
 

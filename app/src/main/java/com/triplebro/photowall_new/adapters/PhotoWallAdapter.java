@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.triplebro.photowall_new.R;
 import com.triplebro.photowall_new.beans.PhotoWallInfo;
 import com.triplebro.photowall_new.widgets.HorizontalListView;
+import com.triplebro.photowall_new.widgets.PhotoHorizontalScrollView;
 
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class PhotoWallAdapter extends BaseAdapter {
     private Context context;
     private List<PhotoWallInfo> photoWallInfoList;
     private int paddingWidth;
-    private PhotoListAdapter.Callback mCallback;
+    private PhotoHorizontalScrollView.Callback mCallback;
     private int screenWidth;
     private int mSpace;
     private int imageSize;
     private final LinearLayout.LayoutParams lpChildImage = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-    public PhotoWallAdapter(Context context, List<PhotoWallInfo> photoWallInfoList,PhotoListAdapter.Callback mCallback) {
+    public PhotoWallAdapter(Context context, List<PhotoWallInfo> photoWallInfoList,PhotoHorizontalScrollView.Callback mCallback) {
         this.context = context;
         this.photoWallInfoList = photoWallInfoList;
         this.mCallback = mCallback;
@@ -58,9 +59,10 @@ public class PhotoWallAdapter extends BaseAdapter {
         if (convertView == null) {
             viewHolder = new ViewHolder();
             convertView = View.inflate(context,R.layout.item_photo_wall, null);
-            viewHolder.hlv_photo_list = convertView.findViewById(R.id.hlv_photo_list);
+            viewHolder.phs_photo_list = convertView.findViewById(R.id.phs_photo_list);
             viewHolder.textView = convertView.findViewById(R.id.tv_text);
             viewHolder.ll_photo_list = convertView.findViewById(R.id.ll_photo_list);
+            viewHolder.ll_photo_list_s = convertView.findViewById(R.id.ll_photo_list_s);
             int size = photoWallInfoList.get(position).getImagePath().size();
             if (size <= 2) {
                 imageSize = (int) ((screenWidth * 1f - mSpace - paddingWidth) / 2);
@@ -71,23 +73,22 @@ public class PhotoWallAdapter extends BaseAdapter {
                 System.out.println("图片大小:" + imageSize);
                 lpChildImage.height = imageSize;
             }
-            viewHolder.hlv_photo_list.setLayoutParams(lpChildImage);
+            viewHolder.phs_photo_list.setLayoutParams(lpChildImage);
             convertView.setTag(viewHolder);
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         paddingWidth = viewHolder.ll_photo_list.getPaddingLeft() + viewHolder.ll_photo_list.getPaddingRight();
-        PhotoListAdapter photoListAdapter = new PhotoListAdapter(context, photoWallInfoList.get(position).getImagePath(),paddingWidth,position);
-        photoListAdapter.setCallback(mCallback);
-        viewHolder.hlv_photo_list.setOnItemClickListener(photoListAdapter);
-        viewHolder.hlv_photo_list.setAdapter(photoListAdapter);
+        viewHolder.phs_photo_list.setCallback(mCallback);
+        viewHolder.phs_photo_list.setImageData(viewHolder.ll_photo_list_s,photoWallInfoList.get(position).getImagePath(),paddingWidth,position);
         viewHolder.textView.setText(photoWallInfoList.get(position).getText());
         return convertView;
     }
 
     private class ViewHolder{
-        private HorizontalListView hlv_photo_list;
+        private PhotoHorizontalScrollView phs_photo_list;
         private TextView textView;
         private LinearLayout ll_photo_list;
+        private LinearLayout ll_photo_list_s;
     }
 }

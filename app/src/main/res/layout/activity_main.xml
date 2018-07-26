@@ -46,6 +46,7 @@
             android:src="@mipmap/photowall_add_2x" />
 
     </RelativeLayout>
+
     <com.triplebro.photowall_new.widgets.MyListView
         android:id="@+id/mlv_photo_wall"
         android:layout_width="match_parent"
@@ -63,8 +64,8 @@
         android:id="@+id/rl_picture_imbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_alignParentRight="true"
+        android:gravity="center"
         android:visibility="gone">
 
         <ImageView
