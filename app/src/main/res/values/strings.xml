@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PhotoWall_New</string>
+    <string name="title">我的照片墙</string>
 </resources>

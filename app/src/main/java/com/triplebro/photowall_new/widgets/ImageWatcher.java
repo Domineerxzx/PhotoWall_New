@@ -89,19 +89,36 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         addView(vPager = new ViewPager(getContext()));
         vPager.addOnPageChangeListener(this);
+        //vPager.setPageTransformer(false,new DepthPageTransformer());
         setVisibility(View.INVISIBLE);
-
-
-
-
+    }
+    //获取当前页面的position
+    public int getCurrentItem(){
+        return vPager.getCurrentItem();
     }
 
+    public ImageView getISource(){
+        return iSource;
+    }
+
+    /*查看大图后在大图上删除图片*/
+    public void delete() {
+        View view = vPager.findViewWithTag(vPager.getCurrentItem());
+        int currentItem = vPager.getCurrentItem();
+        mImageGroupList.remove(currentItem);
+        mUrlList.remove(currentItem);
+        vPager.removeView(view);
+        PagerAdapter adapter = vPager.getAdapter();
+        adapter.notifyDataSetChanged();
+        vPager.setCurrentItem(currentItem,false);
+    }
 
     /**
      * @param i              被点击的ImageView
      * @param imageGroupList 被点击的ImageView的所在列表，加载图片时会提前展示列表中已经下载完成的thumb图片
      * @param urlList        被加载的图片url列表，数量必须大于等于 imageGroupList.size。 且顺序应当和imageGroupList保持一致
      */
+
     public void show(ImageView i, List<ImageView> imageGroupList, final List<String> urlList) {
         if (i == null || imageGroupList == null || urlList == null || imageGroupList.size() < 1 ||
                 urlList.size() < imageGroupList.size()) {
@@ -132,7 +149,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         vPager.setAdapter(adapter = new ImagePagerAdapter());
         vPager.setCurrentItem(initPosition);//设置当前页面
 
-        if(frameLayout!=null){
+        if (frameLayout != null) {
             frameLayout.setVisibility(VISIBLE);
         }
 
@@ -172,6 +189,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         }
         return mGestureDetector.onTouchEvent(event);
     }
+
     //手指刚接触屏的一刹那,若取消，会导致放大图状态无法滑动拖动,可点
     @Override
     public boolean onDown(MotionEvent e) {
@@ -180,6 +198,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         vPager.onTouchEvent(e);
         return true;
     }
+
     //手指离开屏幕的一瞬间,主要负责旋转下拉动画的退出
     public void onUp(MotionEvent e) {
         if (mTouchMode == TOUCH_MODE_EXIT) {
@@ -193,7 +212,8 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         }
         vPager.onTouchEvent(e);
     }
-//滑动
+
+    //滑动
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         final float moveX = e2.getX() - e1.getX();
@@ -246,10 +266,10 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
                             }
                         }
                     }
-                } else if (Math.abs(moveX)< mTouchSlop && moveY > mTouchSlop * 3 ||moveY > mTouchSlop*3 && Math.abs(moveX) > mTouchSlop*1.5) {
+                } else if (Math.abs(moveX) < mTouchSlop && moveY > mTouchSlop * 3 || moveY > mTouchSlop * 3 && Math.abs(moveX) > mTouchSlop * 1.5) {
                     // 单手垂直下拉。转化为Exit手势，可以在下拉过程中看到原始界面;
                     mTouchMode = TOUCH_MODE_EXIT;
-                } else if (Math.abs(moveX) > mTouchSlop*2) {
+                } else if (Math.abs(moveX) > mTouchSlop * 2) {
                     // 左右滑动。转化为Slide手势，可以进行viewpager的翻页滑动
                     mTouchMode = TOUCH_MODE_SLIDE;
                 }
@@ -259,7 +279,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         if (mTouchMode == TOUCH_MODE_SLIDE) {
             vPager.onTouchEvent(e2);
         } else if (mTouchMode == TOUCH_MODE_SCALE_ROTATE) {
-      /*      handleScaleRotateGesture(e2);*/
+            /*      handleScaleRotateGesture(e2);*/
         } else if (mTouchMode == TOUCH_MODE_EXIT) {
             handleExitGesture(e2, e1);
         } else if (mTouchMode == TOUCH_MODE_DRAG) {
@@ -267,7 +287,6 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         }
         return false;
     }
-
 
 
     /**
@@ -292,27 +311,26 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     }
 
 
-
-
     /**
      * 处理单击的手指事件
      */
     public boolean onSingleTapConfirmed() {
         if (iSource == null) return false;
-        if(frameLayout!=null){
+        if (frameLayout != null) {
             frameLayout.setVisibility(GONE);
         }
         ViewState vsCurrent = ViewState.write(iSource, ViewState.STATE_CURRENT);
         ViewState vsDefault = ViewState.read(iSource, ViewState.STATE_DEFAULT);
         if (vsDefault == null || (vsCurrent.scaleY <= vsDefault.scaleY && vsCurrent.scaleX <= vsDefault.scaleX)) {
-             mExitScalingRef = 0;
+            mExitScalingRef = 0;
         } else {
             mExitScalingRef = 1;
         }
         handleExitTouchResult();
         return true;
     }
-//留着
+
+    //留着
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         boolean hadTapMessage = mHandler.hasMessages(SINGLE_TAP_UP_CONFIRMED);
@@ -339,7 +357,6 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     }
 
 
-
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         return false;
@@ -351,7 +368,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
      */
     private void handleExitGesture(MotionEvent e2, MotionEvent e1) {
         if (iSource == null) return;
-        if(frameLayout!=null){
+        if (frameLayout != null) {
             frameLayout.setVisibility(GONE);
         }
         ViewState vsTouchDown = ViewState.read(iSource, ViewState.STATE_TOUCH_DOWN);
@@ -374,7 +391,6 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         iSource.setScaleY(vsTouchDown.scaleY * mExitScalingRef);
         setBackgroundColor(mColorEvaluator.evaluate(mExitScalingRef, 0x00000000, 0xFF000000));
     }
-
 
 
     /**
@@ -431,7 +447,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         if (mExitScalingRef > 0.9f) {
             ViewState vsDefault = ViewState.read(iSource, ViewState.STATE_DEFAULT);
             if (vsDefault == null) return;
-            if(frameLayout!=null){
+            if (frameLayout != null) {
                 frameLayout.setVisibility(VISIBLE);
             }
             animSourceViewStateTransform(iSource, vsDefault);
@@ -466,7 +482,6 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
             animSourceViewStateTransform(iSource, vsDefault);
         }
     }
-
 
 
     /**
@@ -536,16 +551,12 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     /**
      * 每当ViewPager滑动到新的一页后，此方法会被触发<br/>
      * 此刻必不可少的需要同步更新顶部索引，还原前一项后一项的状态等
-     *
-
      */
-
-
-
 
 
     @Override
     public void onPageSelected(int position) {
+        vPager.setTag(position);
         iSource = adapter.mImageSparseArray.get(position);
         if (iOrigin != null) {
             iOrigin.setVisibility(View.VISIBLE);
@@ -573,7 +584,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     }
 
     class ImagePagerAdapter extends PagerAdapter {
- /*       private final LayoutParams lpCenter = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);*/
+        /*       private final LayoutParams lpCenter = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);*/
         private final SparseArray<ImageView> mImageSparseArray = new SparseArray<>();
         private boolean hasPlayBeginAnimation;
 
@@ -596,16 +607,17 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);//注释，缩略图放大过程会变形一下
             itemView.addView(imageView);
             mImageSparseArray.put(position, imageView);
-
-
-
             if (setDefaultDisplayConfigs(imageView, position, hasPlayBeginAnimation)) {
                 hasPlayBeginAnimation = true;
             }
             return itemView;
         }
 
-
+        /*解决数据不刷新的问题*/
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
 
 
         @Override
@@ -614,7 +626,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         }
 
 
-//貌似是从缩略图开始放大的过程
+        //貌似是从缩略图开始放大的过程
         private boolean setDefaultDisplayConfigs(final ImageView imageView, final int pos, boolean hasPlayBeginAnimation) {
             boolean isFindEnterImagePicture = false;
 
@@ -707,8 +719,6 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     }
 
 
-
-
     private static class GestureHandler extends Handler {
         WeakReference<ImageWatcher> mRef;
 
@@ -773,13 +783,9 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     };
 
 
-
-
     public void setTranslucentStatus(int statusBarHeight) {
         mStatusBarHeight = statusBarHeight;
     }
-
-
 
 
     @Override
@@ -868,7 +874,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         void onPictureLongPress(ImageView v, String url, int pos);
     }
 
-    public void setOnPictureButton(RelativeLayout frameLayout){
+    public void setOnPictureButton(RelativeLayout frameLayout) {
         this.frameLayout = frameLayout;
     }
 

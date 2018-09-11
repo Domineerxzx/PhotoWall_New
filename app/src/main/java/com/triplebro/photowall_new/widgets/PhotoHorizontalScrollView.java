@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
-import com.triplebro.photowall_new.R;
 import com.triplebro.photowall_new.views.SquareImageView;
 
 import java.io.File;
@@ -20,11 +19,7 @@ import java.util.List;
 
 public class PhotoHorizontalScrollView extends HorizontalScrollView implements View.OnClickListener {
 
-    private int screenWidth;
-    private int mSpace;
-    private int paddingWidth;
     private int position;
-    private int imageSize;
     private final LinearLayout.LayoutParams lpChildImage = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     private final LinearLayout.LayoutParams viewParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
     private Context context;
@@ -32,6 +27,7 @@ public class PhotoHorizontalScrollView extends HorizontalScrollView implements V
     private PhotoHorizontalScrollView.Callback mCallback;
     private List<ImageView> iPicture = new ArrayList<>();
     private LinearLayout ll_photo_list_s;
+    public int imageSize;
 
     public PhotoHorizontalScrollView(Context context) {
         super(context);
@@ -53,8 +49,8 @@ public class PhotoHorizontalScrollView extends HorizontalScrollView implements V
         this.position = position;
         DisplayMetrics mDisplayMetrics = context.getResources().getDisplayMetrics();
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        screenWidth = windowManager.getDefaultDisplay().getWidth();
-        mSpace = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, mDisplayMetrics) + 0.5f);
+        int screenWidth = windowManager.getDefaultDisplay().getWidth();
+        int mSpace = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, mDisplayMetrics) + 0.5f);
         if (imagePath.size() == 1) {
             imageSize = (int) ((screenWidth * 1f - mSpace - paddingWidth) / 2);
             lpChildImage.width = imageSize;
@@ -62,13 +58,13 @@ public class PhotoHorizontalScrollView extends HorizontalScrollView implements V
         } else if (imagePath.size() <= 2) {
             imageSize = (int) ((screenWidth * 1f - mSpace - paddingWidth) / 2);
             lpChildImage.width = imageSize;
-            lpChildImage.height = lpChildImage.width;
+            lpChildImage.height = imageSize;
         }
         if (imagePath.size() > 2) {
             imageSize = (int) ((screenWidth * 1f - mSpace * 2 - paddingWidth) / 2.4f);
             System.out.println("图片大小:" + imageSize);
             lpChildImage.width = imageSize;
-            lpChildImage.height = lpChildImage.width;
+            lpChildImage.height = imageSize;
         }
         for (String path : imagePath) {
             SquareImageView squareImageView = new SquareImageView(context);

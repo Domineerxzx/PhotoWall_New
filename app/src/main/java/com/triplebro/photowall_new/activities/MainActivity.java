@@ -12,10 +12,10 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.triplebro.photowall_new.R;
-import com.triplebro.photowall_new.adapters.PhotoListAdapter;
 import com.triplebro.photowall_new.adapters.PhotoWallAdapter;
 import com.triplebro.photowall_new.beans.PhotoWallInfo;
 import com.triplebro.photowall_new.utils.Utils;
+import com.triplebro.photowall_new.utils.ViewState;
 import com.triplebro.photowall_new.widgets.ImageWatcher;
 import com.triplebro.photowall_new.widgets.MyListView;
 import com.triplebro.photowall_new.widgets.PhotoHorizontalScrollView;
@@ -28,13 +28,14 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
     private ImageWatcher imageWatcher;
     private boolean isTranslucentStatus;
     private RelativeLayout rl_picture_imbtn;
-    private ImageView btn_picture_magnify_delete;
-    private ImageView btn_picture_magnify_share;
+    private ImageView iv_picture_magnify_delete;
+    private ImageView iv_picture_magnify_share;
     private MyListView mlv_photo_wall;
     private PhotoWallAdapter photoWallAdapter;
     private PhotoWallInfo photoWallInfo;
     private List<PhotoWallInfo> photoWallInfos;
     private List<String> imagePath;
+    private Object ISouce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,29 +57,17 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
     private void initView() {
         rl_picture_imbtn = (RelativeLayout) findViewById(R.id.rl_picture_imbtn);
         imageWatcher = (ImageWatcher) findViewById(R.id.v_image_watcher);
-        btn_picture_magnify_delete = (ImageView) findViewById(R.id.btn_picture_magnify_delete);
-        btn_picture_magnify_share = (ImageView) findViewById(R.id.btn_picture_magnify_share);
+        iv_picture_magnify_delete = (ImageView) findViewById(R.id.iv_picture_magnify_delete);
+        iv_picture_magnify_share = (ImageView) findViewById(R.id.iv_picture_magnify_share);
         mlv_photo_wall = (MyListView) findViewById(R.id.mlv_photo_wall);
-
-        /*photoWallInfos = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            photoWallInfo = new PhotoWallInfo();
-            int name = i+1;
-            imagePath = new ArrayList<>();
-            imagePath.add("/data/data/com.triplebro.photowal_new/cache/"+name+".bmp");
-            photoWallInfo.setImagePath(imagePath);
-            photoWallInfo.setText(String.valueOf(i));
-            photoWallInfos.add(photoWallInfo);
-            photoWallInfo = null;
-        }
-        System.out.println(photoWallInfos.get(0).getImagePath().size());*/
+        mlv_photo_wall.setVerticalScrollBarEnabled(false);
         photoWallInfos = PhotoWallInfo.getPhotoList();
         photoWallAdapter = new PhotoWallAdapter(this, photoWallInfos, this);
         mlv_photo_wall.setAdapter(photoWallAdapter);
 
 
         //图片分享
-        btn_picture_magnify_share.setOnClickListener(new View.OnClickListener() {
+        iv_picture_magnify_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "分享", Toast.LENGTH_SHORT).show();
@@ -102,30 +91,31 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
 
 
     @Override
-    public void onThumbPictureClick(final ImageView i, final List<ImageView> imageGroupList, List<String> imagePath, final int position,final int index) {
+    public void onThumbPictureClick(final ImageView i, final List<ImageView> imageGroupList, final List<String> imagePath, final int position, final int index) {
         imageWatcher.show(i, imageGroupList, imagePath);
         final int[] indexof = {index};
         //图片删除
-        btn_picture_magnify_delete.setOnClickListener(new View.OnClickListener() {
+        iv_picture_magnify_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "删除", Toast.LENGTH_SHORT).show();
-                imageGroupList.remove(indexof[0]);
                 List<String> path = photoWallInfos.get(position).getImagePath();
-                path.remove(indexof[0]);
-                Toast.makeText(MainActivity.this, photoWallInfos.size()+"+"+photoWallInfos.get(0).getImagePath().size(), Toast.LENGTH_SHORT).show();
-                PhotoWallAdapter photoWallAdapter = new PhotoWallAdapter(MainActivity.this, photoWallInfos, MainActivity.this);
-                mlv_photo_wall.setAdapter(photoWallAdapter);
-                if (path.size() == 0) {
+                if (path.size() - 1 == 0) {
                     photoWallInfos.remove(position);
                     imageWatcher.setVisibility(View.GONE);
                     rl_picture_imbtn.setVisibility(View.GONE);
-                } else if (indexof[0] == 0) {
-                    imageWatcher.show(imageGroupList.get(indexof[0]), imageGroupList, path);
-                } else{
-                    imageWatcher.show(imageGroupList.get(indexof[0] - 1), imageGroupList, path);
-                    indexof[0] = indexof[0]-1;
+                } else {
+                    imageWatcher.delete();
                 }
+                photoWallAdapter.notifyDataSetChanged();
+
+                /*ViewState.write(imageWatcher.getISource(), ViewState.STATE_CURRENT);
+                //ViewState.write(imageWatcher.getISource(), ViewState.STATE_TOUCH_SCALE_ROTATE);
+                //ViewState.write(imageWatcher.getISource(), ViewState.STATE_THUMB);
+                ViewState.write(imageWatcher.getISource(), ViewState.STATE_DEFAULT);*/
+                //ViewState.write(imageWatcher.getISource(), ViewState.STATE_TEMP);
+                //ViewState.write(imageWatcher.getISource(), ViewState.STATE_ORIGIN);
+                //ViewState.write(imageWatcher.getISource(), ViewState.STATE_DRAG);
+                //ViewState.write(imageWatcher.getISource(), ViewState.STATE_TOUCH_DOWN);
             }
         });
     }
@@ -134,5 +124,9 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
     @Override
     public void onPictureLongPress(ImageView v, String url, int pos) {
         Toast.makeText(v.getContext().getApplicationContext(), "长按了第" + (pos + 1) + "张图片", Toast.LENGTH_SHORT).show();
+    }
+
+    public ImageView getISource() {
+        return imageWatcher.getISource();
     }
 }

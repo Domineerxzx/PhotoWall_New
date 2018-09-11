@@ -3,7 +3,6 @@ package com.triplebro.photowall_new.utils;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.view.View;
-
 import com.triplebro.photowall_new.R;
 
 
