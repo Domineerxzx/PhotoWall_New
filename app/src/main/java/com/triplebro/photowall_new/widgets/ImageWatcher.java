@@ -81,6 +81,8 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     private int initPosition;
     private int mPagerPositionOffsetPixels;
     private RelativeLayout frameLayout;
+    private ViewState.ValueAnimatorBuilder lastValueAnimatorBuilder;
+    private ImageView originRef;
 
     public ImageWatcher(final Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -92,12 +94,13 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         //vPager.setPageTransformer(false,new DepthPageTransformer());
         setVisibility(View.INVISIBLE);
     }
+
     //获取当前页面的position
-    public int getCurrentItem(){
+    public int getCurrentItem() {
         return vPager.getCurrentItem();
     }
 
-    public ImageView getISource(){
+    public ImageView getISource() {
         return iSource;
     }
 
@@ -105,12 +108,12 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     public void delete() {
         View view = vPager.findViewWithTag(vPager.getCurrentItem());
         int currentItem = vPager.getCurrentItem();
-        mImageGroupList.remove(currentItem);
+        ImageView remove = mImageGroupList.remove(currentItem);
         mUrlList.remove(currentItem);
-        vPager.removeView(view);
         PagerAdapter adapter = vPager.getAdapter();
         adapter.notifyDataSetChanged();
-        vPager.setCurrentItem(currentItem,false);
+        vPager.setCurrentItem(currentItem, false);
+
     }
 
     /**
@@ -279,13 +282,17 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         if (mTouchMode == TOUCH_MODE_SLIDE) {
             vPager.onTouchEvent(e2);
         } else if (mTouchMode == TOUCH_MODE_SCALE_ROTATE) {
-            /*      handleScaleRotateGesture(e2);*/
+            handleScaleRotateGesture(e2);
         } else if (mTouchMode == TOUCH_MODE_EXIT) {
             handleExitGesture(e2, e1);
         } else if (mTouchMode == TOUCH_MODE_DRAG) {
             handleDragGesture(e2, e1);
         }
         return false;
+    }
+
+    private void handleScaleRotateGesture(MotionEvent e2) {
+
     }
 
 
@@ -384,7 +391,6 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
             mExitScalingRef = MIN_SCALE;
 
         }
-
         iSource.setTranslationX(vsTouchDown.translationX + moveX);
         iSource.setTranslationY(vsTouchDown.translationY + moveY);
         iSource.setScaleX(vsTouchDown.scaleX * mExitScalingRef);
@@ -453,6 +459,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
             animSourceViewStateTransform(iSource, vsDefault);
             animBackgroundTransform(0xFF000000);
         } else {
+            adapter.setDefaultDisplayConfigs(adapter.mImageSparseArray.get(vPager.getCurrentItem()),vPager.getCurrentItem(),false);
             ViewState vsOrigin = ViewState.read(iSource, ViewState.STATE_ORIGIN);
             if (vsOrigin == null) return;
             if (vsOrigin.alpha == 0)
@@ -462,6 +469,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
             animBackgroundTransform(0x00000000);
 
             ((FrameLayout) iSource.getParent()).getChildAt(2);
+            originRef = null;
         }
     }
 
@@ -569,7 +577,8 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         //上一个图片记录，不过不清楚是什么意思
         ImageView mLast = adapter.mImageSparseArray.get(position - 1);
         if (ViewState.read(mLast, ViewState.STATE_DEFAULT) != null) {
-            ViewState.restoreByAnim(mLast, ViewState.STATE_DEFAULT).create().start();
+            lastValueAnimatorBuilder = ViewState.restoreByAnim(mLast, ViewState.STATE_DEFAULT);
+            lastValueAnimatorBuilder.create().start();
         }
         //下一个图片记录，不清楚含义
         ImageView mNext = adapter.mImageSparseArray.get(position + 1);
@@ -585,7 +594,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
 
     class ImagePagerAdapter extends PagerAdapter {
         /*       private final LayoutParams lpCenter = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);*/
-        private final SparseArray<ImageView> mImageSparseArray = new SparseArray<>();
+        public final SparseArray<ImageView> mImageSparseArray = new SparseArray<>();
         private boolean hasPlayBeginAnimation;
 
         @Override
@@ -610,6 +619,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
             if (setDefaultDisplayConfigs(imageView, position, hasPlayBeginAnimation)) {
                 hasPlayBeginAnimation = true;
             }
+            System.out.println("----------------------------------"+position);
             return itemView;
         }
 
