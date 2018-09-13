@@ -107,6 +107,7 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
                     imageWatcher.delete();
                 }
                 photoWallAdapter.notifyDataSetChanged();
+                imageWatcher.setOriginRef();
             }
         });
     }
@@ -115,9 +116,5 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
     @Override
     public void onPictureLongPress(ImageView v, String url, int pos) {
         Toast.makeText(v.getContext().getApplicationContext(), "长按了第" + (pos + 1) + "张图片", Toast.LENGTH_SHORT).show();
-    }
-
-    public ImageView getISource() {
-        return imageWatcher.getISource();
     }
 }

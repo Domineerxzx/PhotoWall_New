@@ -53,7 +53,6 @@ public class PhotoWallAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             convertView = View.inflate(context, R.layout.item_photo_wall, null);
             viewHolder.phs_photo_list = convertView.findViewById(R.id.phs_photo_list);
-            viewHolder.tv_content = convertView.findViewById(R.id.tv_content);
             viewHolder.ll_photo_list = convertView.findViewById(R.id.ll_photo_list);
             viewHolder.ll_photo_list_inside = convertView.findViewById(R.id.ll_photo_list_inside);
             convertView.setTag(viewHolder);
@@ -72,20 +71,12 @@ public class PhotoWallAdapter extends BaseAdapter {
                 }
             });
         }
-        ImageView iSource = ((MainActivity) context).getISource();
-        ViewState.write(iSource,ViewState.STATE_DEFAULT)/*.alpha(0).scaleXBy(0.5f).scaleYBy(0.5f)*/;
-        viewHolder.tv_content.setText(photoWallInfoList.get(position).getText());
         return convertView;
     }
 
-    private static class ViewHolder {
+    private class ViewHolder {
         private PhotoHorizontalScrollView phs_photo_list;
-        private TextView tv_content;
         private LinearLayout ll_photo_list;
         private LinearLayout ll_photo_list_inside;
-    }
-
-    public PhotoHorizontalScrollView getPhotoHorizontalScrollView(){
-        return viewHolder.phs_photo_list;
     }
 }
