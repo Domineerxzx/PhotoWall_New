@@ -35,7 +35,7 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
     private PhotoWallInfo photoWallInfo;
     private List<PhotoWallInfo> photoWallInfos;
     private List<String> imagePath;
-    private Object ISouce;
+    private List<ImageView> imageGroupList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +93,7 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
     @Override
     public void onThumbPictureClick(final ImageView i, final List<ImageView> imageGroupList, final List<String> imagePath, final int position, final int index) {
         imageWatcher.show(i, imageGroupList, imagePath);
+        this.imageGroupList = imageGroupList;
         final int[] indexof = {index};
         //图片删除
         iv_picture_magnify_delete.setOnClickListener(new View.OnClickListener() {
@@ -106,8 +107,8 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
                 } else {
                     imageWatcher.delete();
                 }
-                photoWallAdapter.notifyDataSetChanged();
                 imageWatcher.setOriginRef();
+                photoWallAdapter.notifyDataSetChanged();
             }
         });
     }
