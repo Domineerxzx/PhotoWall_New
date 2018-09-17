@@ -107,8 +107,8 @@ public class MainActivity extends Activity implements PhotoHorizontalScrollView.
                 } else {
                     imageWatcher.delete();
                 }
-                imageWatcher.setOriginRef();
                 photoWallAdapter.notifyDataSetChanged();
+                imageWatcher.setOriginRef();
             }
         });
     }

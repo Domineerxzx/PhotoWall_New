@@ -43,6 +43,7 @@ public class PhotoHorizontalScrollView extends HorizontalScrollView implements V
     }
 
     public void setImageData(LinearLayout ll_photo_list_s, List<String> imagePath, int paddingWidth, int position) {
+        iPicture.clear();
         ll_photo_list_s.removeAllViews();
         this.ll_photo_list_s = ll_photo_list_s;
         this.imagePath = imagePath;
@@ -51,16 +52,11 @@ public class PhotoHorizontalScrollView extends HorizontalScrollView implements V
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         int screenWidth = windowManager.getDefaultDisplay().getWidth();
         int mSpace = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, mDisplayMetrics) + 0.5f);
-        if (imagePath.size() == 1) {
+        if (imagePath.size() <= 2) {
             imageSize = (int) ((screenWidth * 1f - mSpace - paddingWidth) / 2);
             lpChildImage.width = imageSize;
             lpChildImage.height = imageSize;
-        } else if (imagePath.size() <= 2) {
-            imageSize = (int) ((screenWidth * 1f - mSpace - paddingWidth) / 2);
-            lpChildImage.width = imageSize;
-            lpChildImage.height = imageSize;
-        }
-        if (imagePath.size() > 2) {
+        } else {
             imageSize = (int) ((screenWidth * 1f - mSpace * 2 - paddingWidth) / 2.4f);
             System.out.println("图片大小:" + imageSize);
             lpChildImage.width = imageSize;
@@ -86,12 +82,13 @@ public class PhotoHorizontalScrollView extends HorizontalScrollView implements V
             squareImageView.setOnClickListener(this);
             this.ll_photo_list_s.addView(squareImageView);
             this.ll_photo_list_s.addView(view);
-            if (iPicture.size() < imagePath.size()) {
+            iPicture.add(squareImageView);
+            /*if (iPicture.size() < imagePath.size()) {
                 iPicture.add(squareImageView);
             } else {
                 iPicture.remove(imagePath.indexOf(path));
                 iPicture.add(imagePath.indexOf(path), squareImageView);
-            }
+            }*/
         }
     }
 

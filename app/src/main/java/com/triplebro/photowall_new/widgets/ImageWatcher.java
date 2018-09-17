@@ -86,6 +86,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     private ImageView currentItemView;
     private ImageView imageView;
     private int currentItem;
+    private ImageView remove;
 
     public ImageWatcher(final Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -100,7 +101,9 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     public void setOriginRef() {
         int currentItem = vPager.getCurrentItem();
         if (this.currentItem == mUrlList.size()) {
-            originRef = mImageGroupList.get(currentItem);
+
+        } else if (this.currentItem == mUrlList.size() - 1 && mUrlList.size() != 1) {
+            /*originRef = mImageGroupList.get(currentItem);
             if (imageView != null) {
                 int[] location = new int[2];
                 originRef.getLocationOnScreen(location);
@@ -112,21 +115,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
                 imageView.getLayoutParams().height = originRef.getHeight();
                 ViewState vsOrigin = ViewState.write(imageView, ViewState.STATE_ORIGIN);
                 vsOrigin.width(originRef.getWidth()).height(originRef.getHeight());
-            }
-        } else if (this.currentItem == mUrlList.size() - 1) {
-            originRef = mImageGroupList.get(currentItem);
-            if (imageView != null) {
-                int[] location = new int[2];
-                originRef.getLocationOnScreen(location);
-                imageView.setTranslationX(location[0]);
-                int locationYOfFullScreen = location[1];
-                locationYOfFullScreen -= mStatusBarHeight;
-                imageView.setTranslationY(locationYOfFullScreen);
-                imageView.getLayoutParams().width = originRef.getWidth();
-                imageView.getLayoutParams().height = originRef.getHeight();
-                ViewState vsOrigin = ViewState.write(imageView, ViewState.STATE_ORIGIN);
-                vsOrigin.width(originRef.getWidth()).height(originRef.getHeight());
-            }
+            }*/
         } else {
             originRef = currentItemView;
             if (adapter.mImageSparseArray.get(currentItem) != null) {
@@ -150,7 +139,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         currentItem = vPager.getCurrentItem();
         currentItemView = mImageGroupList.get(currentItem);
         imageView = adapter.mImageSparseArray.get(currentItem - 1);
-        mImageGroupList.remove(currentItem);
+        remove = mImageGroupList.remove(currentItem);
         mUrlList.remove(currentItem);
         adapter.notifyDataSetChanged();
     }
@@ -600,6 +589,7 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
     @Override
     public void onPageSelected(int position) {
         vPager.setTag(position);
+
         iSource = adapter.mImageSparseArray.get(position);
         if (iOrigin != null) {
             iOrigin.setVisibility(View.VISIBLE);
@@ -640,7 +630,6 @@ public class ImageWatcher extends FrameLayout implements GestureDetector.OnGestu
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
             mImageSparseArray.remove(position);
-            System.out.println("----------------------------------------------");
         }
 
         @Override
